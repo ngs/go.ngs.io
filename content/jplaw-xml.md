@@ -8,5 +8,5 @@ documentation_url: https://pkg.go.dev/jplaw-xml
 license: MIT
 author: ngs
 created_at: 2025-02-08T20:20:46Z
-updated_at: 2025-08-12T13:10:52Z
+updated_at: 2025-08-12T13:17:52Z
 ---
