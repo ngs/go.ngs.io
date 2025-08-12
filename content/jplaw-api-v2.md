@@ -1,5 +1,5 @@
 ---
-title: law-api-v2
+title: jplaw-api-v2
 import_path: go.ngs.io/jplaw-api-v2
 repo_url: https://github.com/ngs/go-jplaw-api-v2
 description: Go Client library for Japanese Laws API Version 2
