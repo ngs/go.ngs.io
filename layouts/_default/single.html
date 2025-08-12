@@ -1,0 +1,39 @@
+{{ define "main" }}
+<div class="container package-detail">
+    {{ if .Param "import_path" }}
+    <div class="package-header">
+        <h1>{{ .Param "import_path" }}</h1>
+        <p>{{ .Param "description" }}</p>
+        
+        <div class="import-command">
+            go get {{ .Param "import_path" }}
+        </div>
+    </div>
+    
+    <dl class="package-info">
+        <dt>Version:</dt>
+        <dd>{{ .Param "version" }}</dd>
+        
+        <dt>License:</dt>
+        <dd>{{ .Param "license" }}</dd>
+        
+        <dt>Author:</dt>
+        <dd>{{ .Param "author" }}</dd>
+        
+        <dt>Repository:</dt>
+        <dd><a href="{{ .Param "repo_url" }}" target="_blank">{{ .Param "repo_url" }}</a></dd>
+        
+        {{ if .Param "documentation_url" }}
+        <dt>Documentation:</dt>
+        <dd><a href="{{ .Param "documentation_url" }}" target="_blank">{{ .Param "documentation_url" }}</a></dd>
+        {{ end }}
+        
+        <dt>Last Updated:</dt>
+        <dd>{{ .Param "updated_at" }}</dd>
+    </dl>
+    {{ else }}
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+    {{ end }}
+</div>
+{{ end }}

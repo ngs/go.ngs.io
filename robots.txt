@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://go.ngs.io/sitemap.xml

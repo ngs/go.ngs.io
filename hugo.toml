@@ -1,0 +1,16 @@
+baseURL = 'https://go.ngs.io/'
+languageCode = 'en-us'
+title = 'Go Modules - ngs.io'
+
+[params]
+  description = "Custom import paths for Go modules"
+
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[outputs]
+  home = ["HTML", "JSON"]
+  page = ["HTML"]

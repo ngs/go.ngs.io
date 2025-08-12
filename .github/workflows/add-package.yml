@@ -1,0 +1,155 @@
+name: Add Package
+
+on:
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  check-mention:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.body, '/add-package') || contains(github.event.comment.body, '/add-package')
+    outputs:
+      should-run: ${{ steps.parse.outputs.should-run }}
+      package-name: ${{ steps.parse.outputs.package-name }}
+      repo-url: ${{ steps.parse.outputs.repo-url }}
+      import-path: ${{ steps.parse.outputs.import-path }}
+      author: ${{ steps.parse.outputs.author }}
+    
+    steps:
+      - name: Parse command
+        id: parse
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.comment?.body || context.payload.issue?.body || '';
+            
+            // Look for /add-package command
+            const match = body.match(/\/add-package\s+(\S+)(?:\s+--repo\s+(\S+))?(?:\s+--import-path\s+(\S+))?(?:\s+--author\s+"([^"]+)")?/);
+            
+            if (match) {
+              core.setOutput('should-run', 'true');
+              core.setOutput('package-name', match[1]);
+              core.setOutput('repo-url', match[2] || '');
+              core.setOutput('import-path', match[3] || '');
+              core.setOutput('author', match[4] || '');
+              
+              console.log('Found command:', {
+                packageName: match[1],
+                repoUrl: match[2],
+                importPath: match[3],
+                author: match[4]
+              });
+            } else {
+              core.setOutput('should-run', 'false');
+            }
+
+  add-package:
+    needs: check-mention
+    if: needs.check-mention.outputs.should-run == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+      
+      - name: Install dependencies
+        run: go mod download
+      
+      - name: Build add-package tool
+        run: go build -o add-package ./cmd/add-package
+      
+      - name: Add package
+        id: add
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ARGS="${{ needs.check-mention.outputs.package-name }}"
+          
+          if [ -n "${{ needs.check-mention.outputs.repo-url }}" ]; then
+            ARGS="$ARGS --repo ${{ needs.check-mention.outputs.repo-url }}"
+          fi
+          
+          if [ -n "${{ needs.check-mention.outputs.import-path }}" ]; then
+            ARGS="$ARGS --import-path ${{ needs.check-mention.outputs.import-path }}"
+          fi
+          
+          if [ -n "${{ needs.check-mention.outputs.author }}" ]; then
+            ARGS="$ARGS --author \"${{ needs.check-mention.outputs.author }}\""
+          fi
+          
+          echo "Running: ./add-package $ARGS"
+          ./add-package $ARGS
+      
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create Pull Request
+        if: steps.changes.outputs.has-changes == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Add ${{ needs.check-mention.outputs.package-name }} package"
+          title: "Add ${{ needs.check-mention.outputs.package-name }} package"
+          body: |
+            This PR adds the `${{ needs.check-mention.outputs.package-name }}` package to go.ngs.io.
+            
+            Triggered by: #${{ github.event.issue.number }}
+            Command: `/add-package ${{ needs.check-mention.outputs.package-name }}`
+            
+            Please review the generated package file and merge if everything looks correct.
+          branch: add-package-${{ needs.check-mention.outputs.package-name }}
+          delete-branch: true
+      
+      - name: Comment on issue
+        if: steps.changes.outputs.has-changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const packageName = '${{ needs.check-mention.outputs.package-name }}';
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `✅ Successfully added package \`${packageName}\`. A pull request has been created for review.`
+            });
+      
+      - name: Comment on error
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const packageName = '${{ needs.check-mention.outputs.package-name }}';
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `❌ Failed to add package \`${packageName}\`. Please check that the repository exists and is accessible.`
+            });

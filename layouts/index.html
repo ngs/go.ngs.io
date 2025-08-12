@@ -1,0 +1,28 @@
+{{ define "main" }}
+<div class="container">
+    <h1>Go Modules</h1>
+    <p class="lead">{{ .Site.Params.description }}</p>
+    
+    <section class="packages">
+        <h2>Available Packages</h2>
+        <div class="package-grid">
+            {{ range where .Site.RegularPages "Params.import_path" "!=" nil }}
+            <div class="package-card">
+                <h3><a href="{{ .RelPermalink }}">{{ .Param "import_path" }}</a></h3>
+                <p>{{ .Param "description" }}</p>
+                <div class="package-meta">
+                    <span class="version">{{ .Param "version" }}</span>
+                    <span class="license">{{ .Param "license" }}</span>
+                </div>
+                <div class="package-links">
+                    <a href="{{ .Param "repo_url" }}" target="_blank">GitHub</a>
+                    {{ if .Param "documentation_url" }}
+                    <a href="{{ .Param "documentation_url" }}" target="_blank">Documentation</a>
+                    {{ end }}
+                </div>
+            </div>
+            {{ end }}
+        </div>
+    </section>
+</div>
+{{ end }}
