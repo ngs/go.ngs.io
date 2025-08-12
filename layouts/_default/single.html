@@ -31,17 +31,6 @@
         <dt>Last Updated:</dt>
         <dd>{{ .Param "updated_at" }}</dd>
     </dl>
-    
-    {{ if .Param "tags" }}
-    <div class="tags">
-        <h3>Tags</h3>
-        <div class="tag-list">
-            {{ range .Param "tags" }}
-            <span class="tag">{{ . }}</span>
-            {{ end }}
-        </div>
-    </div>
-    {{ end }}
     {{ else }}
     <h1>{{ .Title }}</h1>
     {{ .Content }}

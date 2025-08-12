@@ -5,7 +5,12 @@
       "Bash(mkdir:*)",
       "Bash(hugo --gc --minify)",
       "Bash(rm:*)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "Bash(go mod:*)",
+      "Bash(go build:*)",
+      "Bash(./update-packages:*)",
+      "Bash(./add-package:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []

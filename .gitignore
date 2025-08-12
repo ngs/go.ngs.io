@@ -3,6 +3,24 @@
 /resources/_gen/
 /assets/jsconfig.json
 hugo_stats.json
+.hugo_build.lock
+
+# Go binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Built command binaries
+/add-package
+/update-packages
+
+# Go workspace
+go.work
+go.work.sum
 
 # macOS
 .DS_Store

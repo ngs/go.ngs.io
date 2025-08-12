@@ -1,16 +1,12 @@
 ---
 title: "freecal"
 import_path: "go.ngs.io/freecal"
-repo_url: "https://github.com/ngs/go-freecal"
-description: "Go package for working with FreeCal calendar services"
+repo_url: "https://github.com/ngs/freecal"
+description: ""
 version: "v1.0.0"
-tags:
-  - calendar
-  - api
-  - freecal
 documentation_url: "https://pkg.go.dev/go.ngs.io/freecal"
 license: "MIT"
 author: "Atsushi Nagase"
-created_at: "2024-01-01"
-updated_at: "2024-12-01"
+created_at: "2025-08-12T07:37:35Z"
+updated_at: "2025-08-12T07:32:37Z"
 ---

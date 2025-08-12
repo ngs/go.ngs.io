@@ -5,9 +5,6 @@ title = 'Go Modules - ngs.io'
 [params]
   description = "Custom import paths for Go modules"
 
-[taxonomies]
-  tag = "tags"
-  category = "categories"
 
 [markup]
   [markup.goldmark]
