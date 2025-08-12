@@ -1,6 +1,6 @@
 ---
 title: jplaw-xml
-import_path: jplaw-xml
+import_path: go.ngs.io/jplaw-xml
 repo_url: https://github.com/ngs/go-jplaw-xml
 description: Go struct for Japanese Standard Law XML Schema (法令標準XMLスキーマ)
 version: v0.0.3
