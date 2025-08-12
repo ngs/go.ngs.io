@@ -10,7 +10,8 @@
       "Bash(go build:*)",
       "Bash(./update-packages:*)",
       "Bash(./add-package:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": []

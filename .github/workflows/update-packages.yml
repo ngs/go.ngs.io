@@ -27,7 +27,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
       
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -97,7 +97,7 @@ jobs:
         if: steps.changes.outputs.has-changes == 'true' && github.event.inputs.dry-run != 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           commit-message: "Update package metadata from GitHub"
           title: "Update package metadata from GitHub"
           body: |
