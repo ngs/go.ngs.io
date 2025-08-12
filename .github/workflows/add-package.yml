@@ -113,11 +113,6 @@ jobs:
             - **Import Path**: ${{ github.event.inputs.import-path || format('go.ngs.io/{0}', github.event.inputs.package-name) }}
             - **Author**: ${{ github.event.inputs.author || 'Auto-detected' }}
             
-            ## Command Output
-            ```
-            $(cat add-output.txt)
-            ```
-            
             ## Trigger
             - Workflow: Manual dispatch
             - Run: [${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})

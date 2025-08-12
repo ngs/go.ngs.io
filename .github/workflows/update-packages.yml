@@ -106,11 +106,6 @@ jobs:
             ## Updated Packages
             ${{ steps.changes.outputs.modified-packages }}
             
-            ## Update Summary
-            ```
-            $(cat update-output.txt)
-            ```
-            
             ## Trigger
             - Workflow: ${{ github.event_name }}
             - Run: [${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
