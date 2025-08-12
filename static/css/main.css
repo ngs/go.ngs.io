@@ -82,6 +82,32 @@ h1 {
     margin-bottom: 3rem;
 }
 
+.hero {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.gopher-illustration {
+    display: inline-block;
+    margin-bottom: 2rem;
+}
+
+.gopher-svg {
+    width: 150px;
+    height: 150px;
+    filter: drop-shadow(0 4px 6px rgba(0, 173, 216, 0.15));
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
 .packages h2 {
     font-size: 2rem;
     margin-bottom: 2rem;

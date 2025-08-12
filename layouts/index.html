@@ -1,7 +1,12 @@
 {{ define "main" }}
 <div class="container">
-    <h1>Go Modules</h1>
-    <p class="lead">{{ .Site.Params.description }}</p>
+    <div class="hero">
+        <div class="gopher-illustration">
+            <img src="/images/gopher.svg" alt="Go Gopher" class="gopher-svg">
+        </div>
+        <h1>Go Modules</h1>
+        <p class="lead">{{ .Site.Params.description }}</p>
+    </div>
     
     <section class="packages">
         <h2>Available Packages</h2>

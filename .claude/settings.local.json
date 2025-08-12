@@ -11,7 +11,9 @@
       "Bash(./update-packages:*)",
       "Bash(./add-package:*)",
       "Bash(git rm:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(grep:*)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []

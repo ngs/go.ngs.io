@@ -1,6 +1,7 @@
 baseURL = 'https://go.ngs.io/'
 languageCode = 'en-us'
 title = 'Go Modules - ngs.io'
+disableKinds = ['taxonomy', 'term']
 
 [params]
   description = "Custom import paths for Go modules"
