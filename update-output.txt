@@ -1,0 +1,8 @@
+Updating packages from GitHub...
+
+✓ freecal - updated_at
+
+Validating site build...
+✓ Site builds successfully
+
+Summary: 1 updated
