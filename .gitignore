@@ -1,5 +1,12 @@
+# Hugo
+/public/
+/resources/_gen/
+/assets/jsconfig.json
+hugo_stats.json
+
 # macOS
 .DS_Store
+Thumbs.db
 
 # Editor directories and files
 .idea/

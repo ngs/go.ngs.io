@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{ if .Param "import_path" }}
+    <meta name="go-import" content="{{ .Param "import_path" }} git {{ .Param "repo_url" }}">
+    <meta name="go-source" content="{{ .Param "import_path" }} {{ .Param "repo_url" }} {{ .Param "repo_url" }}/tree/main{/dir} {{ .Param "repo_url" }}/blob/main{/dir}/{file}#L{line}">
+    {{ end }}
+    <title>{{ .Title }} - {{ .Site.Title }}</title>
+    <meta name="description" content="{{ .Param "description" | default .Site.Params.description }}">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo">{{ .Site.Title }}</a>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/packages/">Packages</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        {{ block "main" . }}{{ end }}
+    </main>
+    
+    <footer>
+        <p>&copy; {{ now.Year }} {{ .Site.Title }}. All rights reserved.</p>
+    </footer>
+</body>
+</html>

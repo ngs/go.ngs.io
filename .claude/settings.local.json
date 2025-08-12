@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(hugo new:*)",
+      "Bash(mkdir:*)",
+      "Bash(hugo --gc --minify)",
+      "Bash(rm:*)",
+      "Bash(gh api:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
