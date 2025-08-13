@@ -13,8 +13,8 @@ on:
         type: boolean
         default: false
   schedule:
-    # Run weekly on Sunday at 00:00 UTC
-    - cron: '0 0 * * 0'
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
 
 jobs:
   update-packages:
@@ -28,6 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
       
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -93,27 +94,73 @@ jobs:
             echo "No packages needed updating."
           fi
       
-      - name: Create Pull Request
+      - name: Configure Git
         if: steps.changes.outputs.has-changes == 'true' && github.event.inputs.dry-run != 'true'
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
-          commit-message: "Update package metadata from GitHub"
-          title: "Update package metadata from GitHub"
-          body: |
-            This PR updates package metadata from GitHub API.
-            
-            ## Updated Packages
-            ${{ steps.changes.outputs.modified-packages }}
-            
-            ## Trigger
-            - Workflow: ${{ github.event_name }}
-            - Run: [${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            ${{ github.event.inputs.packages && format('- Packages: {0}', github.event.inputs.packages) || '- Packages: All' }}
-            
-            Please review the changes and merge if everything looks correct.
-          branch: update-packages-${{ github.run_number }}
-          delete-branch: true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Push changes to update-packages branch
+        if: steps.changes.outputs.has-changes == 'true' && github.event.inputs.dry-run != 'true'
+        id: push
+        run: |
+          # Create commit
+          git add -A
+          git commit -m "Update package metadata from GitHub"
+          
+          # Push to fixed branch name with force
+          git push origin HEAD:update-packages --force
+          
+          echo "branch-pushed=true" >> $GITHUB_OUTPUT
+      
+      - name: Check for existing PR
+        if: steps.push.outputs.branch-pushed == 'true'
+        id: check-pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if PR already exists
+          PR_NUMBER=$(gh pr list --head update-packages --json number --jq '.[0].number' || echo "")
+          
+          if [ -n "$PR_NUMBER" ]; then
+            echo "pr-exists=true" >> $GITHUB_OUTPUT
+            echo "pr-number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          else
+            echo "pr-exists=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create or Update Pull Request
+        if: steps.push.outputs.branch-pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_BODY="This PR updates package metadata from GitHub API.
+          
+          ## Updated Packages
+          ${{ steps.changes.outputs.modified-packages }}
+          
+          ## Trigger
+          - Workflow: ${{ github.event_name }}
+          - Run: [${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          ${{ github.event.inputs.packages && format('- Packages: {0}', github.event.inputs.packages) || '- Packages: All' }}
+          
+          Please review the changes and merge if everything looks correct."
+          
+          if [ "${{ steps.check-pr.outputs.pr-exists }}" = "true" ]; then
+            # Update existing PR
+            gh pr edit ${{ steps.check-pr.outputs.pr-number }} \
+              --title "Update package metadata from GitHub" \
+              --body "$PR_BODY"
+            echo "Updated existing PR #${{ steps.check-pr.outputs.pr-number }}"
+          else
+            # Create new PR
+            gh pr create \
+              --title "Update package metadata from GitHub" \
+              --body "$PR_BODY" \
+              --head update-packages \
+              --base master
+            echo "Created new PR"
+          fi
       
       - name: Output dry-run results
         if: github.event.inputs.dry-run == 'true'
