@@ -1,7 +1,7 @@
 ---
 title: dropbox-mcp
 import_path: go.ngs.io/dropbox-mcp
-repo_url: https://github.com/ngs/servedir
+repo_url: https://github.com/ngs/dropbox-mcp
 description: ""
 version: v0.0.0
 documentation_url: https://pkg.go.dev/go.ngs.io/dropbox-mcp
