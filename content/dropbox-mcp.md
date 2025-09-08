@@ -8,5 +8,5 @@ documentation_url: https://pkg.go.dev/go.ngs.io/dropbox-mcp
 license: MIT
 author: ngs
 created_at: 2025-09-02T23:16:16Z
-updated_at: 2025-09-02T23:57:32Z
+updated_at: 2025-09-03T01:09:54Z
 ---
