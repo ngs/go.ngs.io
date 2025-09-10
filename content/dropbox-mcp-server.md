@@ -1,5 +1,5 @@
 ---
-title: dropbox-mcp
+title: dropbox-mcp-server
 import_path: go.ngs.io/dropbox-mcp-server
 repo_url: https://github.com/ngs/dropbox-mcp-server
 description: A Model Context Protocol (MCP) server implementation for Dropbox integration, written in Go.
