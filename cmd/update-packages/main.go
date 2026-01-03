@@ -256,6 +256,17 @@ func processPackage(filePath, name string, dryRun, updateAuthor, updateMissing b
 		}
 	}
 
+	// Fetch and update README
+	readme, err := github.GetReadme(owner, repo)
+	if err == nil && readme != pkg.Body {
+		pkg.Body = readme
+		if readme == "" {
+			changes = append(changes, "readme cleared")
+		} else {
+			changes = append(changes, "readme")
+		}
+	}
+
 	// Check if any changes were made
 	if len(changes) == 0 {
 		return updateResult{
