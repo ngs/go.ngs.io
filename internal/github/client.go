@@ -1,6 +1,7 @@
 package github
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -36,6 +37,36 @@ type Release struct {
 
 type Tag struct {
 	Name string `json:"name"`
+}
+
+type Readme struct {
+	Content  string `json:"content"`
+	Encoding string `json:"encoding"`
+}
+
+func GetReadme(owner, repo string) (string, error) {
+	args := []string{"api", fmt.Sprintf("repos/%s/%s/readme", owner, repo)}
+
+	stdout, _, err := gh.Exec(args...)
+	if err != nil {
+		return "", nil // No README available
+	}
+
+	var readme Readme
+	if err := json.Unmarshal(stdout.Bytes(), &readme); err != nil {
+		return "", fmt.Errorf("failed to parse readme data: %w", err)
+	}
+
+	if readme.Encoding != "base64" {
+		return "", fmt.Errorf("unexpected encoding: %s", readme.Encoding)
+	}
+
+	content, err := base64.StdEncoding.DecodeString(readme.Content)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode readme: %w", err)
+	}
+
+	return string(content), nil
 }
 
 func GetRepository(owner, repo string) (*Repository, error) {

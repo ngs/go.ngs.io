@@ -120,6 +120,15 @@ func addPackage(packageName, importPath, repoURL, author string) error {
 		fmt.Printf("Found version: %s\n", version)
 	}
 
+	// Fetch README
+	readme, err := github.GetReadme(owner, repo)
+	if err != nil {
+		fmt.Printf("Warning: Could not fetch README: %v\n", err)
+	} else if readme != "" {
+		pkg.Body = readme
+		fmt.Println("Found README")
+	}
+
 	// Create file path
 	filePath := filepath.Join("content", fmt.Sprintf("%s.md", packageName))
 

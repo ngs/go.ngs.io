@@ -31,6 +31,11 @@
         <dt>Last Updated:</dt>
         <dd>{{ .Param "updated_at" }}</dd>
     </dl>
+    {{ with .Content }}
+    <div class="content">
+        {{ . }}
+    </div>
+    {{ end }}
     {{ else }}
     <h1>{{ .Title }}</h1>
     {{ .Content }}

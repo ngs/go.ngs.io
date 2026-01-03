@@ -22,6 +22,7 @@ type Package struct {
 	Author           string    `yaml:"author"`
 	CreatedAt        time.Time `yaml:"created_at"`
 	UpdatedAt        time.Time `yaml:"updated_at"`
+	Body             string    `yaml:"-"` // Content after frontmatter (README)
 }
 
 func ReadPackage(filePath string) (*Package, error) {
@@ -29,18 +30,20 @@ func ReadPackage(filePath string) (*Package, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file: %w", err)
 	}
-	
-	// Extract frontmatter
-	frontmatter, err := extractFrontmatter(data)
+
+	// Extract frontmatter and body
+	frontmatter, body, err := extractFrontmatterAndBody(data)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var pkg Package
 	if err := yaml.Unmarshal(frontmatter, &pkg); err != nil {
 		return nil, fmt.Errorf("failed to parse frontmatter: %w", err)
 	}
-	
+
+	pkg.Body = body
+
 	return &pkg, nil
 }
 
@@ -52,21 +55,26 @@ func WritePackage(filePath string, pkg *Package) error {
 	if err := encoder.Encode(pkg); err != nil {
 		return fmt.Errorf("failed to encode package: %w", err)
 	}
-	
-	// Create markdown content with frontmatter
-	content := fmt.Sprintf("---\n%s---\n", buf.String())
-	
+
+	// Create markdown content with frontmatter and body
+	var content string
+	if pkg.Body != "" {
+		content = fmt.Sprintf("---\n%s---\n\n%s", buf.String(), pkg.Body)
+	} else {
+		content = fmt.Sprintf("---\n%s---\n", buf.String())
+	}
+
 	// Ensure directory exists
 	dir := filepath.Dir(filePath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
-	
+
 	// Write file
 	if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
 		return fmt.Errorf("failed to write file: %w", err)
 	}
-	
+
 	return nil
 }
 
@@ -92,21 +100,29 @@ func ListPackages(contentDir string) ([]string, error) {
 	return packages, nil
 }
 
-func extractFrontmatter(data []byte) ([]byte, error) {
+func extractFrontmatterAndBody(data []byte) (frontmatter []byte, body string, err error) {
 	content := string(data)
-	
+
 	// Check for frontmatter delimiters
 	if !strings.HasPrefix(content, "---\n") {
-		return nil, fmt.Errorf("no frontmatter found")
+		return nil, "", fmt.Errorf("no frontmatter found")
 	}
-	
+
 	// Find the closing delimiter
 	endIndex := strings.Index(content[4:], "\n---")
 	if endIndex == -1 {
-		return nil, fmt.Errorf("invalid frontmatter format")
+		return nil, "", fmt.Errorf("invalid frontmatter format")
 	}
-	
+
 	// Extract frontmatter content (without delimiters)
-	frontmatter := content[4 : endIndex+4]
-	return []byte(frontmatter), nil
+	frontmatter = []byte(content[4 : endIndex+4])
+
+	// Extract body (after closing delimiter)
+	bodyStart := endIndex + 4 + 4 // skip "\n---"
+	if bodyStart < len(content) {
+		body = strings.TrimPrefix(content[bodyStart:], "\n")
+		body = strings.TrimPrefix(body, "\n") // Handle extra newline after ---
+	}
+
+	return frontmatter, body, nil
 }
