@@ -27,6 +27,11 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
@@ -46,6 +51,9 @@ jobs:
             --gc \
             --minify \
             --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: Generate llms.txt
+        run: go run ./cmd/generate-llms-txt -o public/llms.txt
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
