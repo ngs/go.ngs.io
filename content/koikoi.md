@@ -8,14 +8,14 @@ documentation_url: https://pkg.go.dev/go.ngs.io/koikoi
 license: MIT
 author: Atsushi Nagase
 created_at: 2026-03-08T16:59:29Z
-updated_at: 2026-03-08T17:20:01Z
+updated_at: 2026-03-08T17:35:40Z
 ---
 
 # koikoi
 
 Go 製の CUI 花札こいこいゲーム（任天堂ルール準拠）。
 
-![Screenshot](./docs/screenshot.jpg)
+![Screenshot](https://github.com/ngs/go-koikoi/raw/master/docs/screenshot.jpg)
 
 ## インストール
 
@@ -28,8 +28,8 @@ go install go.ngs.io/koikoi@latest
 ### Homebrew
 
 ```bash
-brew tap ngs/formulae
-brew install ngs/formulae/koikoi
+brew tap ngs/tap
+brew install ngs/tap/koikoi
 ```
 
 ### ソースからビルド
