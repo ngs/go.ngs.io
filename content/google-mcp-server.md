@@ -6,7 +6,7 @@ description: MCP server for Google Workspace APIs - Calendar, Drive, Gmail, Shee
 version: v0.4.0
 documentation_url: https://pkg.go.dev/google-mcp-server
 license: MIT
-author: '"Atsushi'
+author: Atsushi Nagase
 created_at: 2025-09-08T06:04:17Z
 updated_at: 2026-02-17T01:10:48Z
 ---
