@@ -3,12 +3,12 @@ title: koikoi
 import_path: go.ngs.io/koikoi
 repo_url: https://github.com/ngs/go-koikoi
 description: Go 製の CUI 花札こいこいゲーム（任天堂ルール準拠）
-version: v0.0.1
+version: v0.0.4
 documentation_url: https://pkg.go.dev/go.ngs.io/koikoi
 license: MIT
 author: Atsushi Nagase
 created_at: 2026-03-08T16:59:29Z
-updated_at: 2026-03-08T17:35:40Z
+updated_at: 2026-03-09T10:02:49Z
 ---
 
 # koikoi
