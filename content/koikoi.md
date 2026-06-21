@@ -2,20 +2,20 @@
 title: koikoi
 import_path: go.ngs.io/koikoi
 repo_url: https://github.com/ngs/go-koikoi
-description: Go 製の CUI 花札こいこいゲーム（任天堂ルール準拠）
+description: Go 製の TUI 花札こいこいゲーム（任天堂ルール準拠）
 version: v0.0.7
 documentation_url: https://pkg.go.dev/go.ngs.io/koikoi
 license: MIT
 author: Atsushi Nagase
 created_at: 2026-03-08T16:59:29Z
-updated_at: 2026-06-15T12:02:42Z
+updated_at: 2026-06-20T03:04:33Z
 ---
 
 # koikoi
 
 [![CI](https://github.com/ngs/go-koikoi/actions/workflows/ci.yml/badge.svg)](https://github.com/ngs/go-koikoi/actions/workflows/ci.yml)
 
-Go 製の CUI 花札こいこいゲーム（任天堂ルール準拠）。
+Go 製の TUI 花札こいこいゲーム（任天堂ルール準拠）。
 
 ![Screenshot](https://github.com/ngs/go-koikoi/raw/master/docs/screenshot.jpg)
 
