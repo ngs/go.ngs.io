@@ -8,7 +8,7 @@ documentation_url: https://pkg.go.dev/go.ngs.io/tides-api
 license: MIT
 author: ngs
 created_at: 2025-10-20T20:48:48Z
-updated_at: 2026-06-22T22:01:39Z
+updated_at: 2026-07-07T20:33:46Z
 ---
 
 # Tide API
