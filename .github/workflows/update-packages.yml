@@ -83,15 +83,32 @@ jobs:
         id: changes
         if: github.event.inputs.dry-run != 'true'
         run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "has-changes=true" >> $GITHUB_OUTPUT
-            
-            # Get list of modified files
-            MODIFIED_FILES=$(git diff --name-only | grep "^content/" | sed 's/content\///; s/\.md$//' | tr '\n' ' ')
-            echo "modified-packages=$MODIFIED_FILES" >> $GITHUB_OUTPUT
-          else
+          CHANGED_FILES=$(git diff --name-only)
+
+          if [ -z "$CHANGED_FILES" ]; then
             echo "has-changes=false" >> $GITHUB_OUTPUT
             echo "No packages needed updating."
+            exit 0
+          fi
+
+          NON_TIMESTAMP_CHANGES=$(git diff --unified=0 -- content/*.md | awk '
+            /^(\+\+\+|---) / { next }
+            /^[+-]/ && $0 !~ /^[+-](created_at|updated_at):[[:space:]]+"?[0-9TZ:+.-]+"?$/ { print }
+          ')
+
+          NON_CONTENT_CHANGES=$(printf '%s\n' "$CHANGED_FILES" | grep -vE '^content/[^/]+\.md$' || true)
+
+          if [ -z "$NON_CONTENT_CHANGES" ] && [ -z "$NON_TIMESTAMP_CHANGES" ]; then
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "timestamp-only=true" >> $GITHUB_OUTPUT
+            echo "Only package timestamp metadata changed; skipping PR."
+            git diff --stat -- content
+          else
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+
+            # Get list of modified packages
+            MODIFIED_FILES=$(printf '%s\n' "$CHANGED_FILES" | grep "^content/" | sed 's/content\///; s/\.md$//' | tr '\n' ' ')
+            echo "modified-packages=$MODIFIED_FILES" >> $GITHUB_OUTPUT
           fi
       
       - name: Configure Git
