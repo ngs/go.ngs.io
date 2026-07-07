@@ -15,10 +15,16 @@
             <div class="package-card">
                 <h3><a href="{{ .RelPermalink }}">{{ .Param "import_path" }}</a></h3>
                 <p>{{ .Param "description" }}</p>
+                {{ if or (.Param "version") (.Param "license") }}
                 <div class="package-meta">
-                    <span class="version">{{ .Param "version" }}</span>
-                    <span class="license">{{ .Param "license" }}</span>
+                    {{ with .Param "version" }}
+                    <span class="version">{{ . }}</span>
+                    {{ end }}
+                    {{ with .Param "license" }}
+                    <span class="license">{{ . }}</span>
+                    {{ end }}
                 </div>
+                {{ end }}
                 <div class="package-links">
                     <a href="{{ .Param "repo_url" }}" target="_blank">GitHub</a>
                     {{ if .Param "documentation_url" }}

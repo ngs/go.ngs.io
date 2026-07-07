@@ -11,8 +11,10 @@
     </div>
     
     <dl class="package-info">
+        {{ with .Param "version" }}
         <dt>Version:</dt>
-        <dd>{{ .Param "version" }}</dd>
+        <dd>{{ . }}</dd>
+        {{ end }}
         
         <dt>License:</dt>
         <dd>{{ .Param "license" }}</dd>

@@ -9,6 +9,17 @@
     {{ end }}
     <title>{{ .Title }} - {{ .Site.Title }}</title>
     <meta name="description" content="{{ .Param "description" | default .Site.Params.description }}">
+    <meta name="color-scheme" content="light dark">
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem("theme") || "auto";
+                document.documentElement.setAttribute("data-theme", theme);
+            } catch (error) {
+                document.documentElement.setAttribute("data-theme", "auto");
+            }
+        })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="/css/main.css">
 </head>
@@ -27,7 +38,45 @@
     </main>
     
     <footer>
-        <p>&copy; {{ now.Year }} <a href="https://ngs.io">Atsushi Nagase</a>. All rights reserved.</p>
+        <div class="footer-inner">
+            <p>&copy; {{ now.Year }} <a href="https://ngs.io">Atsushi Nagase</a>. All rights reserved.</p>
+            <div class="theme-switcher" role="group" aria-label="Theme">
+                <button type="button" data-theme-option="auto">System</button>
+                <button type="button" data-theme-option="dark">Dark</button>
+                <button type="button" data-theme-option="light">Light</button>
+            </div>
+        </div>
     </footer>
+    <script>
+        (function () {
+            var storageKey = "theme";
+            var root = document.documentElement;
+            var buttons = document.querySelectorAll("[data-theme-option]");
+            var validThemes = ["auto", "dark", "light"];
+
+            function normalizeTheme(theme) {
+                return validThemes.indexOf(theme) === -1 ? "auto" : theme;
+            }
+
+            function applyTheme(theme) {
+                theme = normalizeTheme(theme);
+                root.setAttribute("data-theme", theme);
+                try {
+                    localStorage.setItem(storageKey, theme);
+                } catch (error) {
+                }
+                buttons.forEach(function (button) {
+                    button.setAttribute("aria-pressed", button.dataset.themeOption === theme ? "true" : "false");
+                });
+            }
+
+            applyTheme(root.getAttribute("data-theme"));
+            buttons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    applyTheme(button.dataset.themeOption);
+                });
+            });
+        })();
+    </script>
 </body>
 </html>
