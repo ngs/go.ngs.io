@@ -3,12 +3,12 @@ title: hugo-primer-blog
 import_path: go.ngs.io/hugo-primer-blog
 repo_url: https://github.com/ngs/hugo-primer-blog
 description: A clean, responsive Hugo blog theme using GitHub's Primer CSS design system.
-version: v1.0.9
+version: v1.0.10
 documentation_url: https://pkg.go.dev/go.ngs.io/hugo-primer-blog
 license: MIT
 author: ngs
 created_at: 2026-01-01T23:12:44Z
-updated_at: 2026-06-27T01:15:21Z
+updated_at: 2026-07-07T19:49:03Z
 ---
 
 # Primer Blog
@@ -309,11 +309,13 @@ This overrides the default GitHub blue (`#0969da`) with your chosen color. The t
 
 ### Custom CSS
 
-Create `assets/css/custom.css` in your site root to add custom styles (will be merged with the theme's custom.css):
+Create `assets/css/custom.css` in your site root to add custom styles:
 
 ```css
 /* Your custom styles here */
 ```
+
+The theme's own styles live in `assets/css/primer-blog.css`. Your `custom.css` is loaded *after* it, so your rules override the theme without shadowing it. (See `exampleSite/assets/css/custom.css` for a working example.)
 
 ### Overriding Templates
 
