@@ -8,7 +8,7 @@ documentation_url: https://pkg.go.dev/google-mcp-server
 license: MIT
 author: Atsushi Nagase
 created_at: 2025-09-08T06:04:17Z
-updated_at: 2026-05-08T06:00:09Z
+updated_at: 2026-07-10T02:46:05Z
 ---
 
 # Google MCP Server
