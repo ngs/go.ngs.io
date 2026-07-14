@@ -8,7 +8,7 @@ documentation_url: https://pkg.go.dev/go.ngs.io/tides-api
 license: MIT
 author: ngs
 created_at: 2025-10-20T20:48:48Z
-updated_at: 2026-07-12T22:15:58Z
+updated_at: 2026-07-13T22:52:06Z
 ---
 
 # Tide API
@@ -614,6 +614,18 @@ Contributions are welcome! Please:
 3. Add tests for new functionality
 4. Ensure all tests pass (`make test`)
 5. Submit a pull request
+
+## Data licensing
+
+> Generated using AVISO+ Products
+
+The FES tidal model is **not** covered by this repository's MIT license. It is an
+AVISO+ Product with its own terms, which govern commercial use, redistribution
+and the credit line every client must carry.
+
+- [DATA_LICENSING.md](DATA_LICENSING.md) — what those terms mean for this project
+- [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) — attributions
+- [License to Use AVISO+ Products](https://www.aviso.altimetry.fr/fileadmin/documents/data/License_Aviso.pdf) — the original text
 
 ## Acknowledgments
 
