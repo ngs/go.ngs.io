@@ -8,7 +8,7 @@ documentation_url: https://pkg.go.dev/go.ngs.io/koikoi
 license: MIT
 author: Atsushi Nagase
 created_at: 2026-03-08T16:59:29Z
-updated_at: 2026-06-20T03:04:33Z
+updated_at: 2026-07-31T22:37:55Z
 ---
 
 # koikoi
@@ -27,6 +27,10 @@ Go 製の TUI 花札こいこいゲーム（任天堂ルール準拠）。
 - 🤖 3段階の CPU 難易度
 - 💾 ゲーム進捗の自動セーブ
 - 🏆 リーチ（テンパイ）表示
+
+## ブラウザで遊ぶ
+
+インストール不要で <https://koikoi.ngs.io> からそのまま遊べます（WebAssembly。進捗は localStorage に自動セーブ）。
 
 ## インストール
 
@@ -50,6 +54,12 @@ git clone https://github.com/ngs/go-koikoi.git
 cd go-koikoi
 go build -o koikoi .
 ./koikoi
+```
+
+ブラウザ (WASM) 版をローカルで動かす場合:
+
+```bash
+make serve-wasm
 ```
 
 ## 使い方
