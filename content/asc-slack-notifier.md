@@ -8,7 +8,7 @@ documentation_url: https://pkg.go.dev/go.ngs.io/asc-slack-notifier
 license: MIT
 author: ngs
 created_at: 2026-08-06T23:13:14Z
-updated_at: 2026-08-06T23:13:33Z
+updated_at: 2026-08-08T07:31:01Z
 ---
 
 # asc-slack-notifier
@@ -43,7 +43,7 @@ export ASC_WEBHOOK_SECRET='your-webhook-secret'
 export SLACK_WEBHOOK_URL='https://hooks.slack.com/services/T000/B000/XXXX'
 
 go run ./cmd/asc-slack-notifier
-# listening on :8080, webhook at POST /webhook, health check at GET /healthz
+# listening on :8080, webhook at POST /webhook, health check at GET /health
 ```
 
 Send a signed request by hand:
@@ -69,21 +69,53 @@ curl -sS -X POST http://localhost:8080/webhook \
 | `RUN_MODE` | no | auto | `http` or `lambda`. Auto-detected as `lambda` when `AWS_LAMBDA_FUNCTION_NAME` is set, `http` otherwise |
 | `PORT` | no | `8080` | Listen port in `http` mode |
 | `WEBHOOK_PATH` | no | `/webhook` | Path notifications are posted to |
+| `HEALTH_PATH` | no | `/health` | Path answering health checks |
 | `NOTIFY_PING` | no | `true` | Set to `false` to acknowledge webhook pings without posting to Slack |
 | `LOG_LEVEL` | no | `info` | `debug`, `info`, `warn` or `error` |
 
 Startup fails when no Slack destination is configured.
+
+`HEALTH_PATH` defaults to `/health` rather than `/healthz` because the Google
+frontend in front of Cloud Run can intercept `/healthz` before it reaches the
+container. Set `HEALTH_PATH` if your platform expects a different path. It must
+differ from `WEBHOOK_PATH`; startup fails when the two collide.
+
+### About `ASC_WEBHOOK_SECRET`
+
+Apple does not issue this secret — you generate it yourself and use the same
+value in two places: this service's environment, and the `attributes.secret`
+field when you create the webhook with `POST /v1/webhooks`. App Store Connect
+signs every delivery with it, and the service recomputes the signature to verify
+the request really came from Apple.
+
+```sh
+openssl rand -hex 32
+```
+
+Any sufficiently long random string works; treat it like a password. If the two
+copies drift apart, every delivery is rejected with `401`.
 
 ## Endpoints
 
 | Method | Path | Description |
 |---|---|---|
 | `POST` | `${WEBHOOK_PATH}` | Webhook receiver. `401` on signature failure, `400` on malformed payloads, `502` when Slack rejects the message, `200` otherwise |
-| `GET` | `/healthz` | Health check, returns `200 ok` |
+| `GET` | `${HEALTH_PATH}` | Health check, returns `200 ok` |
 
 The request body is capped at 1 MiB.
 
-## Deploy to Cloud Run
+## Deploy
+
+The quickest route is to fork this repository and let GitHub Actions deploy it:
+set the `DEPLOY_TARGET` repository variable to `cloudrun` or `lambda`, add the
+secrets, and every push to `master`/`main` deploys your instance.
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) walks through the variables, secrets
+and one-time platform provisioning. A fork with `DEPLOY_TARGET` unset skips both
+jobs and stays green.
+
+The sections below cover deploying by hand instead.
+
+### Deploy to Cloud Run
 
 ```sh
 PROJECT_ID=your-project
@@ -107,7 +139,7 @@ The service must be publicly reachable so App Store Connect can post to it; the
 `x-apple-signature` HMAC is what authenticates the request. Cloud Run injects
 `PORT` automatically.
 
-## Deploy to AWS Lambda + API Gateway
+### Deploy to AWS Lambda + API Gateway
 
 Build the deployment package for the `provided.al2023` runtime:
 
@@ -177,9 +209,15 @@ Resources:
 
 ## Register the webhook with App Store Connect
 
-Create the webhook with the App Store Connect API, using the same secret the
-service is configured with. `$TOKEN` is a JWT for your App Store Connect API
-key and `$APP_ID` is the app's resource id.
+Create the webhook with the App Store Connect API. `$TOKEN` is a JWT for your
+App Store Connect API key and `$APP_ID` is the app's resource id.
+
+The `attributes.secret` below is **your own** value, not something Apple hands
+out — generate it once and give the identical string to both sides:
+
+```sh
+openssl rand -hex 32   # use the output as ASC_WEBHOOK_SECRET and as attributes.secret
+```
 
 ```sh
 curl -sS -X POST 'https://api.appstoreconnect.apple.com/v1/webhooks' \
