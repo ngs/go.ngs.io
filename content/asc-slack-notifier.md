@@ -8,7 +8,7 @@ documentation_url: https://pkg.go.dev/go.ngs.io/asc-slack-notifier
 license: MIT
 author: ngs
 created_at: 2026-08-06T23:13:14Z
-updated_at: 2026-08-08T07:31:01Z
+updated_at: 2026-08-08T07:38:00Z
 ---
 
 # asc-slack-notifier
