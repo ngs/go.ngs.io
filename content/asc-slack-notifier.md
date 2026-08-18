@@ -8,7 +8,7 @@ documentation_url: https://pkg.go.dev/go.ngs.io/asc-slack-notifier
 license: MIT
 author: ngs
 created_at: 2026-08-06T23:13:14Z
-updated_at: 2026-08-08T07:38:00Z
+updated_at: 2026-08-13T04:54:58Z
 ---
 
 # asc-slack-notifier
@@ -29,6 +29,9 @@ by an environment variable.
   `REJECTED` ❌, …).
 - Event types Apple has not documented yet are still delivered, using a generic
   key/value rendering — notifications are never silently dropped.
+- Optional App Store Connect API enrichment: with an API key configured, version
+  state and build upload notifications name the app, version and build number
+  and carry an "Open in App Store Connect" button instead of a bare UUID.
 - Slack destination is either an Incoming Webhook URL or a bot token plus
   channel (`chat.postMessage`).
 - Returns `502` when Slack cannot be reached, so App Store Connect redelivers.
@@ -72,6 +75,10 @@ curl -sS -X POST http://localhost:8080/webhook \
 | `HEALTH_PATH` | no | `/health` | Path answering health checks |
 | `NOTIFY_PING` | no | `true` | Set to `false` to acknowledge webhook pings without posting to Slack |
 | `LOG_LEVEL` | no | `info` | `debug`, `info`, `warn` or `error` |
+| `ASC_API_KEY_ID` | no | – | App Store Connect API key ID. Enables message enrichment, see below |
+| `ASC_API_ISSUER_ID` | no | – | App Store Connect API issuer ID |
+| `ASC_API_PRIVATE_KEY` | no | – | PEM contents of the API key, or the whole PEM base64-encoded. Literal `\n` sequences in a plain PEM value are expanded, so a single-line value works |
+| `ASC_API_PRIVATE_KEY_PATH` | no | – | Path to the `.p8` key file, read at startup. `ASC_API_PRIVATE_KEY` wins when both are set |
 
 Startup fails when no Slack destination is configured.
 
@@ -94,6 +101,45 @@ openssl rand -hex 32
 
 Any sufficiently long random string works; treat it like a password. If the two
 copies drift apart, every delivery is rejected with `401`.
+
+### App Store Connect API enrichment (optional)
+
+A webhook payload identifies the resource it is about by a bare UUID and nothing
+else, so an `appStoreVersionAppVersionStateUpdated` notification cannot say
+which app or version moved. Configure an App Store Connect API key and the
+service looks the resource up before posting, adding **App**, **Version** and
+**Build** fields plus an **Open in App Store Connect** button that jumps
+straight to the app's distribution page.
+
+Build upload and build state notifications (`buildUploadStateUpdated`,
+`buildBetaDetailExternalBuildStateUpdated`) are enriched the same way, from the
+build itself: the app, the pre-release version, the build number, and a button
+opening the app's TestFlight page.
+
+Create the key in App Store Connect → **Users and Access** → **Integrations** →
+**App Store Connect API**. The `Developer` or `App Manager` role is enough — the
+service only reads. Download the `.p8` file (it is offered once), and note the
+key ID and the issuer ID shown on the same page.
+
+```sh
+export ASC_API_KEY_ID='ABCD123456'
+export ASC_API_ISSUER_ID='69a6de70-0000-0000-0000-000000000000'
+export ASC_API_PRIVATE_KEY_PATH='/secrets/AuthKey_ABCD123456.p8'
+# or, for platforms that only carry string secrets:
+# export ASC_API_PRIVATE_KEY="$(cat AuthKey_ABCD123456.p8)"
+# or base64-encoded, as fastlane's key_content accepts it:
+# export ASC_API_PRIVATE_KEY="$(base64 -i AuthKey_ABCD123456.p8)"
+```
+
+`ASC_API_PRIVATE_KEY` accepts the PEM as is or base64 encoded; the two are
+detected automatically, so no extra flag is needed.
+
+The feature is entirely optional: with none of the `ASC_API_*` variables set,
+messages are rendered from the webhook payload alone, exactly as before. Setting
+some but not all of them is a configuration error and fails at startup, so a
+typo cannot silently disable enrichment. If the API call fails at delivery time
+the failure is logged and the Slack message is posted un-enriched — an App Store
+Connect outage never costs you a notification.
 
 ## Endpoints
 
