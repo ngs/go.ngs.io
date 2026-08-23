@@ -3,12 +3,12 @@ title: hugo-primer-blog
 import_path: go.ngs.io/hugo-primer-blog
 repo_url: https://github.com/ngs/hugo-primer-blog
 description: A clean, responsive Hugo blog theme using GitHub's Primer CSS design system.
-version: v1.0.10
+version: v1.0.13
 documentation_url: https://pkg.go.dev/go.ngs.io/hugo-primer-blog
 license: MIT
 author: ngs
 created_at: 2026-01-01T23:12:44Z
-updated_at: 2026-08-05T11:53:05Z
+updated_at: 2026-08-23T02:22:14Z
 ---
 
 # Primer Blog
@@ -186,7 +186,7 @@ tags: ["hugo", "primer"]
 categories: ["tutorial"]
 author: "Your Name"
 description: "A brief description of the post"
-image: "/images/featured.jpg"  # Optional featured image
+image: "/images/featured.jpg"  # Optional featured image (992×525 recommended; rendered at that aspect ratio)
 hideReadingTime: true          # Optional: hide reading time for this page
 ---
 ```
