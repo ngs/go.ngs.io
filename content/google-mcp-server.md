@@ -3,12 +3,12 @@ title: google-mcp-server
 import_path: go.ngs.io/google-mcp-server
 repo_url: https://github.com/ngs/google-mcp-server
 description: MCP server for Google Workspace APIs - Calendar, Drive, Gmail, Sheets, Docs, and Slides integration
-version: v0.7.0
+version: v0.7.1
 documentation_url: https://pkg.go.dev/google-mcp-server
 license: MIT
 author: Atsushi Nagase
 created_at: 2025-09-08T06:04:17Z
-updated_at: 2026-08-21T11:36:51Z
+updated_at: 2026-08-23T03:34:14Z
 ---
 
 # Google MCP Server
