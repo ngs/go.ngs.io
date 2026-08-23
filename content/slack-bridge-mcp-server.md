@@ -6,7 +6,7 @@ description: MCP server that bridges a resident Claude CLI session with Slack vi
 version: ""
 documentation_url: https://pkg.go.dev/go.ngs.io/slack-bridge-mcp-server
 license: MIT
-author: '"Atsushi'
+author: Atsushi Nagase
 created_at: 2026-08-23T03:43:57Z
 updated_at: 2026-08-23T05:09:10Z
 ---
