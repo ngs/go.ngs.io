@@ -8,7 +8,7 @@ documentation_url: https://pkg.go.dev/go.ngs.io/hugo-primer-blog
 license: MIT
 author: ngs
 created_at: 2026-01-01T23:12:44Z
-updated_at: 2026-08-23T02:22:14Z
+updated_at: 2026-09-04T11:17:08Z
 ---
 
 # Primer Blog
