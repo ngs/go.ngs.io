@@ -8,7 +8,7 @@ documentation_url: https://pkg.go.dev/google-mcp-server
 license: MIT
 author: Atsushi Nagase
 created_at: 2025-09-08T06:04:17Z
-updated_at: 2026-08-23T03:34:14Z
+updated_at: 2026-09-17T09:01:12Z
 ---
 
 # Google MCP Server
@@ -198,6 +198,8 @@ Download pre-built binaries from the [releases page](https://github.com/ngs/goog
 - `sheets_sheet_update` - Update sheet properties (title, position, visibility)
 - `sheets_dimension_insert` - Insert rows or columns into a sheet
 - `sheets_dimension_delete` - Delete rows or columns from a sheet (destructive)
+- `sheets_cells_format` - Apply cell formatting (background color, text style, alignment, number format) without touching values
+- `sheets_cells_get_format` - Read the formatting a range carries, without reading its values
 
 All Sheets tools support the `account` parameter.
 
@@ -223,8 +225,42 @@ All Sheets tools support the `account` parameter.
 - `slides_set_layout` - Set slide layout (supports `account` parameter)
 - `slides_export_pdf` - Export presentation as PDF (supports `account` parameter)
 - `slides_share` - Create shareable link (supports `account` parameter)
+- `slides_layouts_list` - List masters, layouts and their placeholders (supports `account` parameter)
+- `slides_slide_create_from_layout` - Create a slide from a layout and fill its placeholders (supports `account` parameter)
+- `slides_replace_all_text` - Replace text tokens across the deck (supports `account` parameter)
+- `slides_slide_reorder` - Move slides to a new position (supports `account` parameter)
 
 ## Usage Examples
+
+### Filling a Slides Template
+
+Build a deck from a designer-made template by writing into the layouts it already
+defines, instead of placing new text boxes. The template keeps ownership of the
+design, so the result cannot drift out of alignment.
+
+1. **See what the template offers**:
+   - Call `slides_layouts_list` with the presentation ID
+   - It returns each layout with its display name, API name and placeholders, as
+     `type` and `index` pairs such as `TITLE[0]` and `BODY[0]`
+
+2. **Create a slide from a layout**:
+   - Call `slides_slide_create_from_layout` with the layout name and the
+     placeholders to fill:
+
+   ```json
+   {
+     "presentation_id": "1AbC...",
+     "layout_name": "Title and body",
+     "placeholders": [
+       { "type": "TITLE", "text": "Quarterly review" },
+       { "type": "BODY", "text": "Revenue up\nChurn down\nTwo hires", "bullets": true }
+     ]
+   }
+   ```
+
+   No shape is created and nothing existing is moved or restyled. Text is inserted
+   as written, so Markdown markers are not interpreted.
+
 
 ### Multi-Account Support
 
