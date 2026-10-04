@@ -8,7 +8,7 @@ documentation_url: https://pkg.go.dev/go.ngs.io/dropbox-mcp-server
 license: MIT
 author: ngs
 created_at: 2025-09-02T23:16:16Z
-updated_at: 2026-07-08T14:36:56Z
+updated_at: 2026-10-02T10:59:32Z
 ---
 
 # Dropbox MCP Server
