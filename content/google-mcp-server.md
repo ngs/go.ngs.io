@@ -3,12 +3,12 @@ title: google-mcp-server
 import_path: go.ngs.io/google-mcp-server
 repo_url: https://github.com/ngs/google-mcp-server
 description: MCP server for Google Workspace APIs - Calendar, Drive, Gmail, Sheets, Docs, and Slides integration
-version: v0.7.1
+version: v0.8.0
 documentation_url: https://pkg.go.dev/google-mcp-server
 license: MIT
 author: Atsushi Nagase
 created_at: 2025-09-08T06:04:17Z
-updated_at: 2026-09-17T09:01:12Z
+updated_at: 2026-10-02T03:37:44Z
 ---
 
 # Google MCP Server
@@ -179,6 +179,12 @@ Download pre-built binaries from the [releases page](https://github.com/ngs/goog
 - `drive_permissions_list` - List file permissions (supports `account` parameter)
 - `drive_permissions_create` - Grant permissions (supports `account` parameter)
 - `drive_permissions_delete` - Remove permissions (supports `account` parameter)
+- `drive_comments_list` - List comments and replies on a file, including Google Docs (supports `account` parameter)
+- `drive_comment_create` - Add a comment to a file (supports `account` parameter)
+- `drive_comment_reply_create` - Reply to a comment, optionally resolving or reopening it (supports `account` parameter)
+- `drive_comment_resolve` - Resolve a comment, optionally with a closing reply (supports `account` parameter)
+
+Comments on Google Docs, Sheets and Slides are Drive comments, so these tools work for those files too. They use the existing `drive` scope, so no re-authentication is needed. Comments created through the API cannot be attached to a text range in Google Workspace editors: they appear as file-level comments, and `quoted_text` is shown only as the quoted context.
 
 ### Google Gmail
 - `gmail_messages_list` - List email messages (supports `account` parameter)
