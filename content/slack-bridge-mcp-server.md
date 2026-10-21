@@ -3,12 +3,12 @@ title: slack-bridge-mcp-server
 import_path: go.ngs.io/slack-bridge-mcp-server
 repo_url: https://github.com/ngs/slack-bridge-mcp-server
 description: MCP server that bridges a resident Claude CLI session with Slack via Socket Mode - chat with your local agent from your phone
-version: v0.4.0
+version: v0.5.0
 documentation_url: https://pkg.go.dev/go.ngs.io/slack-bridge-mcp-server
 license: MIT
 author: Atsushi Nagase
 created_at: 2026-08-23T03:43:57Z
-updated_at: 2026-09-11T20:51:38Z
+updated_at: 2026-10-17T14:07:43Z
 ---
 
 # slack-bridge-mcp-server
@@ -190,6 +190,7 @@ intended rather than a problem. [docs/setup.md](docs/setup.md) covers the rest o
 |---|---|---|
 | `slack_wait` | `timeout_seconds` (optional, default 300, clamped to 5–1500) | `{"messages": [{"ts", "thread_ts"?, "user", "text", "channel", "files"?}…], "timed_out": false}`, oldest first, plus `reactions` when any emoji arrived: `[{"ts", "channel", "user", "user_name", "reaction", "added", "event_ts"}…]`, plus `reactions_dropped: true` when some were lost. On timeout, `{"messages": [], "timed_out": true}`. |
 | `slack_post` | `text` (required), `thread_ts`, `channel` (optional) | `{"ts", "channel"}` — where the message landed |
+| `slack_upload` | `path` (required), `channel`, `thread_ts`, `initial_comment`, `filename`, `title` (all optional) | `{"file_id", "title"?, "channel"}` — the shared file and where it went. Needs the `files:write` scope; see [Sending files](#sending-files). |
 | `slack_ack` | `ts` (required), `emoji` (optional, default `eyes`), `channel` (optional) | Confirmation. Receipt is marked automatically, so this is for a deliberate signal beyond it. |
 | `slack_ask` | `question` (required), `options` (required, 2–10), `timeout_seconds`, `thread_ts`, `channel` and `interrupt_on_message` (optional, default true) | `{"choice_index", "choice_label", "ts", "timed_out": false}`. On timeout, `{"choice_index": -1, "timed_out": true}`. When a message ends the question instead of a click, `{"choice_index": -1, "interrupted": true}`. Every settled outcome also carries `messages`: whatever the owner said while the question was up, delivered as `slack_wait` would have. |
 | `slack_history` | `limit` (optional, default 50, clamped to 1–200), `oldest`, `latest` (exclusive bounds), `thread_ts`, `channel` (all optional) | `{"messages": [{"ts", "user"?, "user_name", "text", "thread_ts"?, "bot", "reply_count"?, "files"?}…], "has_more"}`, oldest first, every author. A limit keeps the newest end of the window. |
@@ -323,6 +324,22 @@ no token at all, which makes it the thing to quote back at you.
 `slack_history` reports the same `files` on any message that has them, so an
 attachment somebody else posted is visible when you ask the agent to read the
 channel.
+
+### Sending files
+
+`slack_upload` goes the other way: it shares a file from the machine the server
+runs on — a screenshot, a log, a report the agent made — into a conversation,
+optionally inside a thread and with a comment posted alongside it. Like
+`slack_post`, it goes to the home channel unless you name another, so pass the
+`channel` and `thread_ts` of the conversation it answers.
+
+It uses Slack's external upload: `files.getUploadURLExternal` for an upload URL
+issued for the file's exact size, a POST of the bytes to that URL, and
+`files.completeUploadExternal` to share the file into the channel. The file must
+exist, be a regular file, not be empty and be under 1 GB; anything else is an
+error before Slack is called. It needs the `files:write` bot scope — without it
+the call fails with an error that names the scope; add it under **OAuth &
+Permissions** and reinstall the app.
 
 ## Receipt and progress
 
@@ -565,7 +582,7 @@ the session with `/attend`.
 ## Manual smoke test
 
 With the binary built, this drives the MCP handshake by hand and should list
-the eight tools. It needs no Slack credentials: listing the tools calls none of
+the nine tools. It needs no Slack credentials: listing the tools calls none of
 them, and it is the calls that connect.
 
 ```sh
