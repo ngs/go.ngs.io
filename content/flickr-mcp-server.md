@@ -6,7 +6,7 @@ description: MCP server exposing the Flickr API as tools
 version: v0.1.0
 documentation_url: https://pkg.go.dev/go.ngs.io/flickr-mcp-server
 license: MIT
-author: ngs
+author: Atsushi Nagase
 created_at: 2026-10-21T08:58:31Z
 updated_at: 2026-10-21T18:44:49Z
 ---
